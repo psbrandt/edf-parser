@@ -1,16 +1,10 @@
 {
-  "name": "edf",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "directories": {
-    "test": "test"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "Yehezkel Reyes",
-  "email":"yejezkel.rp@gmail.com",	
+  "name": "edf-parser",
+  "version": "0.0.2",
+  "description": "Edf parser",
+  "main": "src/index.js",
+  "keywords": ["edf","parser"],
+  "author": "Amed Reyes",
+  "email":"areyes@nerd.com",
   "license": "ISC"
 }
