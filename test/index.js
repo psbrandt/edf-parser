@@ -64,6 +64,7 @@ var status = {
     waterMark: 0,
     header: null,
     signals: null,
+    block:null,
     stage: HEADER_STATUS,
     error: null
 }
@@ -97,6 +98,19 @@ reader.on('data',(chunk) => {
             chunk = chunk.slice(used)
             console.log(status.signals)
         }
+    }
+
+    if(DATA_STATUS == status.stage){
+        let counter = 0
+        while(chunk.length > 0){
+            const {used,parsed} = read_data_block(status,chunk);
+            chunk = chunk.slice(used)
+            if(parsed){
+                counter++
+                log(`block parsed: ${counter}`)
+            }
+        }
+
     }
 })
 
@@ -231,6 +245,32 @@ function parse_signal_header_field(field,signals,data,scratch_pad,waterMark){
     return {
         waterMark : waterMark,
         parsed    : i
+    }
+}
+
+
+function read_data_block(status, data){
+    //initialize
+    if(!status.block){
+        const block_size = status.signals.reduce((acc, signal) => {
+            return acc + signal.Samples*2
+        },0)
+        log(block_size)
+        status.block = Buffer.allocUnsafe(block_size)
+    }
+
+    var waterMark = status.waterMark
+    const to_copy = status.block.length - waterMark
+    const copied  = data.copy(
+        status.block, waterMark,0,Math.min(to_copy,data.length)
+    )
+
+    waterMark += copied
+    status.waterMark = (waterMark == status.block.length)? 0 : waterMark
+
+    return {
+        used    : copied,
+        parsed  : (status.waterMark == 0)
     }
 }
 
