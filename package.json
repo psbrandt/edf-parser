@@ -1,9 +1,12 @@
 {
   "name": "edf-parser",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Edf parser",
   "main": "src/index.js",
-  "keywords": ["edf","parser"],
+  "keywords": [
+    "edf",
+    "parser"
+  ],
   "author": "Amed Reyes",
   "email":"areyes@nerd.com",
   "license": "ISC",
