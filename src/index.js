@@ -90,7 +90,7 @@ var DataBlocks = class extends Transform {
         //we are assuming header.Signals is always > 0
         this.state.stage = SIGNAL_STATUS
         chunk = chunk.slice(used)
-        log(this.state.header)
+        this.emit('header',this.state.header);
       }
     }
 
@@ -99,7 +99,7 @@ var DataBlocks = class extends Transform {
         if(used && !this.state.error){
             this.state.stage = DATA_STATUS
             chunk = chunk.slice(used)
-            log(this.state.signals)
+            this.emit('signals',this.state.signals);
         }
     }
 
@@ -109,14 +109,13 @@ var DataBlocks = class extends Transform {
             const {used,parsed} = read_data_block(this.state,chunk);
             chunk = chunk.slice(used)
             if(parsed){
-                
                 this.push(this.state.block)
                 
             }
         }
     }
 
-    callback(this.state.error,input)
+    callback(this.state.error)
   }
 
   
@@ -271,7 +270,7 @@ function read_data_block(status, data){
     waterMark += copied
     status.waterMark = (waterMark == status.block.length)? 0 : waterMark
     if(!status.waterMark){
-      log("Block Parsed")
+      log("Block Parsed: " + status.block.length)
     }
 
     return {
