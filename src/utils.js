@@ -1,25 +1,32 @@
-'use strict';
-const processors = require('./processors.js');
-const decoders   = require('./decoder.js');
+'use strict'
+const processors = require('./processors.js')
+const decoders = require('./decoder.js')
 const log = require('util').debuglog('edf')
 
-function createStandardProcessors (headers){
+function StandardSignalProcessors (headers) {
+  var list = headers.map((h) => {
+    log(h)
+    const decoder = new decoders.Decoder(
+            h.DigitalMin, h.DigitalMax, h.PhysicalMin, h.PhysicalMax
+        )
 
+    return new processors.SignalProcessor(
+            h, decoder
+        )
+  })
 
-    var list = headers.map( (h) => {
-        log(h)
-        const decoder = new decoders.Decoder(
-            h.DigitalMin, h.DigitalMax,h.PhysicalMin, h.PhysicalMax
-        );
+  return list
+}
 
-        return  new processors.SignalProcessor(
-            h,decoder
-        );
-    })
+function StandardRecordProcessor (header, signals) {
+  const list = StandardSignalProcessors(signals)
 
-    return list
+  return new processors.RecordProcessor(
+      header.Start, header.Duration, list
+    )
 }
 
 module.exports = {
-    createStandardProcessors    
+  StandardSignalProcessors,
+  StandardRecordProcessor
 }

@@ -1,15 +1,14 @@
 'use strict'
 const log = require('util').debuglog('edf')
 const Transform = require('stream').Transform
-const MissingEdfHeader = new Error('Missing Edf Header')
-const SignalAndProcessorMissmatch = new Error('Signals and Processors count missmatch')
+const NotFactory = new Error("Expting factory to be a function")
 
 const STATUS_NOTSTARTED = 0
 const STATUS_STARTED = 1
 
-var DataRecords = class extends Transform {
+var RecordsStream = class extends Transform {
 
-  constructor (options) {
+  constructor (factory, options) {
 
     options = options || {}
     options.decodeStrings = true
@@ -20,8 +19,15 @@ var DataRecords = class extends Transform {
     super(options)
 
     this.header = options.header || null
-    this.processors = options.processors || null
+    this.signals = options.signals || null
     this.status = STATUS_NOTSTARTED
+    this.datarecord = null
+
+    if(!(factory instanceof Function)){
+      throw NotFactory
+    }
+
+    this.factory = factory
   }
 
   setHeader (header) {
@@ -29,65 +35,38 @@ var DataRecords = class extends Transform {
     return this
   }
 
-  setProcessors (processors) {
-    this.processors = processors
+  setSignals (signals) {
+    this.signals = signals
   }
 
-  _initialize (header, processors) {
+  _initialize (header, signals) {
 
-    if (header.Signals != processors.length) {
-      return SignalAndProcessorMissmatch
-    }
+    const rprocessor = this.factory(
+      header,signals
+    );
 
-    var samples = []
-    
-    processors.forEach(function (p) {
-      samples.push(
-        new Array(p.Samples()).fill(0.0)
-      )
-    })
-    
-    this.samples = samples
-    this.count = 0
-    this.start = this.header.Start
+    this.rprocessor = rprocessor
     this.status = STATUS_STARTED
   }
 
   _transform (chunk, encoding, callback) {
 
-    const header = this.header
-    const processors = this.processors
-
         // initialization
     if (STATUS_NOTSTARTED == this.status) {
       this._initialize(
-                header, processors
-            )
+        this.header, this.signals
+      )
     }
 
-    var samples = this.samples
-    var current = 0
+    const used = this.rprocessor.Process(chunk)
+    const out  = this.rprocessor.GetAll()
 
-    for (let i = 0; i < this.processors.length; i++) {
-      current += processors[i].Process(
-                chunk.slice(current), samples[i]
-            )
-    }
-
-    this.count++
-        // todo adjust start time
-    var out = {
-      count: this.count,
-      start: this.start,
-      duration: header.Duration,
-      samples: samples
-    }
-    //log(out)
     this.push(out)
+    //todo: findout if we need to take into accout the used value
     callback()
   }
 }
 
 module.exports = {
-  DataRecords
+  RecordsStream
 }

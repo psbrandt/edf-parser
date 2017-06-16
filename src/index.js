@@ -4,10 +4,14 @@ const log = require('util').debuglog('edf')
 
 
 const ENCODING      = 'ascii'
+const DATE_SEP      = '.'
 const HEADER_LENGTH = 256
 const HEADER_STATUS = 0
 const SIGNAL_STATUS = 1
 const DATA_STATUS   = 2
+
+//errors
+const InvalidStart = new Error('Invalid start date/time field')
 
 const signal_header_fields = [
     {
@@ -152,7 +156,13 @@ function parse_edf_header(buffer,header){
     header.Patient = buffer.toString(ENCODING,8,88).trimRight()
     header.Id      = buffer.toString(ENCODING,88,168).trimRight()
     //todo: convert to date time
-    header.Start   = buffer.toString(ENCODING,168,184).trimRight()
+    const sdate = buffer.toString(ENCODING,168,176).trimRight()
+    const stime = buffer.toString(ENCODING,176,184).trimRight()
+
+    header.Start   = parse_edfstart(
+        sdate, stime
+    )
+
     header.HeaderLength = parseInt(buffer.toString(ENCODING,184,192).trimRight())
     header.Reserved = buffer.toString(ENCODING,192,236).trimRight()
     header.DataRecords = parseInt(buffer.toString(ENCODING,236,244).trimRight())
@@ -160,6 +170,23 @@ function parse_edf_header(buffer,header){
     header.Duration = buffer.toString(ENCODING,244,252).trimRight()
     header.Signals = parseInt(buffer.toString(ENCODING,252).trimRight())
     return true;
+}
+
+function parse_edfstart(sdate, stime){
+    const date_parts = sdate.split(DATE_SEP)
+    const time_parts = stime.split(DATE_SEP)
+
+    if(date_parts.length != 3 || time_parts.length != 3){
+        InvalidStart
+    }
+
+    var year = parseInt(date_parts[2])
+    const clipping = (year >= 85 && year <= 99)? 1900 : 2000
+
+    return new Date(
+        year+clipping,date_parts[1],date_parts[0],
+        time_parts[0],time_parts[1],time_parts[2]
+    )
 }
 
 function read_signal_headers(status,data){
