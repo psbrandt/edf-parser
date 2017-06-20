@@ -1,6 +1,6 @@
 {
   "name": "edf-parser",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Edf parser",
   "main": "src/index.js",
   "keywords": [
@@ -8,7 +8,7 @@
     "parser"
   ],
   "author": "Amed Reyes",
-  "email":"areyes@nerd.com",
+  "email": "areyes@nerd.com",
   "license": "ISC",
   "repository": {
     "type": "git",
