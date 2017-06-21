@@ -1,49 +1,46 @@
-'use strict';
-const InvalidDigitalRange = new Error("Invalid digital range")
-const InvalidInput        = new Error("Invalid length of byte inputs")
-const log = require('util').debuglog('edf')
+'use strict'
+const InvalidDigitalRange = new Error('Invalid digital range')
+const InvalidInput = new Error('Invalid length of byte inputs')
 
 var Decoder = class {
-    constructor(digmin, digmax,phymin, phymax){
-
-        const diff = digmax - digmin
-        if(!diff){
-            throw InvalidDigitalRange
-        }
-
-        this.m = (phymax - phymin) / diff
-        this.digmax = digmax
-        this.phymax = phymax
-        
+  constructor (digmin, digmax, phymin, phymax) {
+    const diff = digmax - digmin
+    if (!diff) {
+      throw InvalidDigitalRange
     }
 
-    Decode(source, target){
+    this.m = (phymax - phymin) / diff
+    this.digmax = digmax
+    this.phymax = phymax
+  }
 
-        const slen = source.length
-        const tlen = target.length
-        const pmax = this.phymax
-        const dmax = this.digmax
-        const m    = this.m
+  Decode (source, target) {
+    const slen = source.length
+    const tlen = target.length
+    const pmax = this.phymax
+    const dmax = this.digmax
+    const m = this.m
 
-        if(slen % 2 != 0){
-            throw InvalidInputl
-        }
-
-        var s = 0, t = 0, tmp = 0
-        while(s < slen && t < tlen){
-
-            tmp = source.readInt16LE(s,true)
-
-            target[t] = pmax + m*(tmp - dmax)
-            
-            s += 2
-            t += 1
-        }
-
-        return s;
+    if (slen % 2 !== 0) {
+      throw InvalidInput
     }
+
+    var s = 0
+    var t = 0
+    var tmp = 0
+    while (s < slen && t < tlen) {
+      tmp = source.readInt16LE(s, true)
+
+      target[t] = pmax + m * (tmp - dmax)
+
+      s += 2
+      t += 1
+    }
+
+    return s
+  }
 }
 
 module.exports = {
-    Decoder
+  Decoder
 }
