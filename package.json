@@ -7,11 +7,15 @@
     "edf",
     "parser"
   ],
-  "author": "Amed Reyes",
+  "author": "Yehezkel (Amed) Reyes",
   "email": "areyes@nerd.com",
   "license": "ISC",
   "repository": {
     "type": "git",
-    "url": "git://bitbucket.org/yehezkel/edf-parser"
+    "url": "https://bitbucket.org/yehezkel/edf-parser.git"
+  },
+  "bugs":{
+    "url": "https://bitbucket.org/yehezkel/edf-parser/issues",
+    "email": "yejezkel.rp@gmail.com"
   }
 }
