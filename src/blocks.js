@@ -128,7 +128,7 @@ function read_header (status, data) {
   }
 
   var header = {}
-  const result = parse_edf_header(status.buffer, header)
+  const result = ParseEdfHeader(status.buffer, header)
   if (result !== true) {
     status.error = result
     return false
@@ -140,7 +140,7 @@ function read_header (status, data) {
   return copied
 }
 
-function parse_edf_header (buffer, header) {
+function ParseEdfHeader (buffer, header) {
   header.Version = parseInt(buffer.toString(ENCODING, 0, 8).trimRight())
   header.Patient = buffer.toString(ENCODING, 8, 88).trimRight()
   header.Id = buffer.toString(ENCODING, 88, 168).trimRight()
@@ -290,6 +290,7 @@ function read_data_block (status, data) {
   }
 }
 
-module.exports = {
-  DataBlocks
+exports = module.exports = {
+  DataBlocks,
+  ParseEdfHeader
 }
