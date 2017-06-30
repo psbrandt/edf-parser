@@ -1,6 +1,6 @@
 {
   "name": "edf-parser",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Edf parser",
   "main": "src/main.js",
   "keywords": [
@@ -14,11 +14,11 @@
     "type": "git",
     "url": "https://bitbucket.org/yehezkel/edf-parser.git"
   },
-  "bugs":{
+  "bugs": {
     "url": "https://bitbucket.org/yehezkel/edf-parser/issues",
     "email": "yejezkel.rp@gmail.com"
   },
-  "directories":{
-    "example":"sample"
+  "directories": {
+    "example": "sample"
   }
 }
