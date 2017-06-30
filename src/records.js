@@ -8,6 +8,11 @@ const STATUS_STARTED = 1
 
 var RecordsStream = class extends Transform {
 
+  /**
+    Factory is function that give the file header
+    and the signal headers return a RecordProcessor objects
+    to be use for the translation of each data block
+  */
   constructor (factory, options) {
 
     options = options || {}

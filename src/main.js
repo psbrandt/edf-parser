@@ -27,8 +27,10 @@ function createPipeChain (reader) {
                  .pipe(records)
 }
 
-exports.RecordsStream = RecordsStream
+
 exports.DataBlocks = DataBlocks
+exports.RecordsStream = RecordsStream
+//utility functions
 exports.utils = utils
 exports.utils.ParseEdfHeader = ParseEdfHeader
 exports.StandardDecoder = decoder.Decoder
