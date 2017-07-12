@@ -11,6 +11,7 @@ const DATA_STATUS = 2
 
 // errors
 const InvalidStart = new Error('Invalid start date/time field')
+const InvalidHeaderBuffer = new Error('Edf header encoded can no be less than 256')
 
 const signal_header_fields = [
   {
@@ -141,6 +142,11 @@ function read_header (status, data) {
 }
 
 function ParseEdfHeader (buffer, header) {
+
+  if(buffer.length < HEADER_LENGTH){
+    throw InvalidHeaderBuffer
+  }
+
   header.Version = parseInt(buffer.toString(ENCODING, 0, 8).trimRight())
   header.Patient = buffer.toString(ENCODING, 8, 88).trimRight()
   header.Id = buffer.toString(ENCODING, 88, 168).trimRight()

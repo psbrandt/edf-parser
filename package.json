@@ -20,5 +20,17 @@
   },
   "directories": {
     "example": "sample"
+  },
+  "devDependencies": {
+    "blanket": "^1.2.3",
+    "mocha": "^3.4.2",
+    "nyc": "^11.0.3"
+  },
+  "scripts": {
+    "test": "mocha tests/ --recursive",
+    "test-coverage": "nyc --reporter=text mocha tests/ --recursive"
+  },
+  "nyc": {
+    "exclude": "tests"
   }
 }

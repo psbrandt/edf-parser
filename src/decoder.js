@@ -1,5 +1,6 @@
 'use strict'
 const InvalidDigitalRange = new Error('Invalid digital range')
+const InvalidPhysicalRange = new Error('Invalid physical range')
 const InvalidInput = new Error('Invalid length of byte inputs')
 
 var Decoder = class {
@@ -7,6 +8,10 @@ var Decoder = class {
     const diff = digmax - digmin
     if (!diff) {
       throw InvalidDigitalRange
+    }
+
+    if(0 === (phymax - phymin)){
+        throw InvalidPhysicalRange
     }
 
     this.m = (phymax - phymin) / diff
