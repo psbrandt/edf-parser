@@ -213,7 +213,7 @@ function read_signal_headers (status, data) {
             field, signals, data.slice(used), status.buffer, waterMark
         )
 
-    used += field.length * (result.parsed) + result.waterMark
+    used += result.read
 
     if (
         result.waterMark !== 0 ||
@@ -221,11 +221,12 @@ function read_signal_headers (status, data) {
     ) {
       status.waterMark = result.waterMark
       status.buffer[HEADER_LENGTH - 1] = current_signal + result.parsed
-      status.buffer[HEADER_LENGTH - 2] = current_field + i
+      status.buffer[HEADER_LENGTH - 2] = i
       return false
     }
 
     current_signal = 0
+    waterMark = result.waterMark
   }
 
   return used
@@ -242,7 +243,7 @@ function parse_signal_header_field (field, signals, data, scratch_pad, waterMark
     let to_copy = FIELD_SIZE - waterMark
 
     let copied = data.copy(
-            buffer, buffer.waterMark, read, Math.min(read + to_copy, data.length)
+            buffer, waterMark, read, Math.min(read + to_copy, data.length)
         )
 
     waterMark += copied
@@ -263,6 +264,7 @@ function parse_signal_header_field (field, signals, data, scratch_pad, waterMark
   }
 
   return {
+    read: read,
     waterMark: waterMark,
     parsed: i
   }
