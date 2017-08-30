@@ -79,12 +79,13 @@ var DataBlocks = class extends Transform {
     options.writableObjectMode = false
     super(options)
 
+    this.headerParser = options.headerParser || ParseEdfHeader
     this.state = new TransformState()
   }
 
   _transform (chunk, encoding, callback) {
     if (HEADER_STATUS === this.state.stage) {
-      const used = read_header(this.state, chunk)
+      const used = read_header(this.state, chunk, this.headerParser)
       if (used && !this.state.error) {
         // we are assuming header.Signals is always > 0
         this.state.stage = SIGNAL_STATUS
@@ -116,7 +117,7 @@ var DataBlocks = class extends Transform {
   }
 }
 
-function read_header (status, data) {
+function read_header (status, data, parser) {
   const to_copy = HEADER_LENGTH - status.waterMark
 
   const copied = data.copy(
@@ -129,7 +130,7 @@ function read_header (status, data) {
   }
 
   var header = {}
-  const result = ParseEdfHeader(status.buffer, header)
+  const result = parser(status.buffer, header)
   if (result !== true) {
     status.error = result
     return false

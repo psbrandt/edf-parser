@@ -100,6 +100,63 @@ describe("DataBlock Parsing header", function(){
     //assert.equal(true,false)
   })
 
+  it("Specifying Header parser", function(done){
+
+    var input = MemoryStream.createReadStream([
+        "0       X X ",
+        "X X                     ",
+        "                ",
+        "                 ",
+        "                   Start",
+        "date 12-AUG-2009 X ",
+        "X BCI2000             ",
+        "                ",
+        "                  12.08.0916.",
+        "15.0016896   EDF+",
+        "C                         ",
+        "              61      1       65  "
+      ]
+    )
+
+    const expected_header = {
+          Version: 0,
+          Patient: 'X X X X',
+          Id: 'Startdate 12-AUG-2009 X X BCI2000',
+          Start: new Date("2009-09-12T20:15:00.000Z"),
+          HeaderLength: 16896,
+          Reserved: 'EDF+C',
+          DataRecords: 61,
+          Duration: '1',
+          Signals: 65
+    }
+
+    var parser_called = false
+    var headerParser = function(buffer, header){
+        parser_called  = true
+        return ParseEdfHeader(buffer, header)
+    }
+
+    const blocks = new DataBlocks({
+        headerParser: headerParser
+    })
+
+    var cb_called = false
+    blocks.on('header', (header) => {
+      cb_called = true
+      assert.deepStrictEqual(header,expected_header, "Successfully parsed")
+    })
+
+    input.on('end',() => {
+      //confirm header callback was call
+      assert.equal(true, parser_called, "header parser have been call")
+      assert.equal(true, cb_called, "header event has been trigger")
+      done()
+    })
+
+    input.pipe(blocks)
+    //assert.equal(true,false)
+  })
+
   it("Stream Signal headers", function(done){
 
     var input = MemoryStream.createReadStream([
