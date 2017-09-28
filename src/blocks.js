@@ -180,7 +180,7 @@ function parse_edfstart (sdate, stime) {
   const clipping = (year >= 85 && year <= 99) ? 1900 : 2000
 
   return new Date(
-        year + clipping, date_parts[1], date_parts[0],
+        year + clipping, date_parts[1] - 1, date_parts[0],
         time_parts[0], time_parts[1], time_parts[2]
     )
 }
