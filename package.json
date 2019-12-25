@@ -1,8 +1,8 @@
 {
   "name": "@psbrandt/edf-parser",
-  "version": "0.2.5",
+  "version": "0.2.7",
   "description": "Edf parser",
-  "main": "src/main.js",
+  "main": "dist/main.js",
   "keywords": [
     "edf",
     "parser"
@@ -25,11 +25,14 @@
     "blanket": "^1.2.3",
     "memorystream": "^0.3.1",
     "mocha": "^6.2.2",
-    "nyc": "^15.0.0"
+    "nyc": "^15.0.0",
+    "parcel-bundler": "^1.12.4"
   },
   "scripts": {
     "test": "mocha tests/ --recursive",
-    "test-coverage": "nyc --reporter=text mocha tests/ --recursive"
+    "test-coverage": "nyc --reporter=text mocha tests/ --recursive",
+    "build": "parcel build src/main.js",
+    "publish": "npm publish --access public"
   },
   "nyc": {
     "exclude": "tests"
