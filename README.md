@@ -1,5 +1,7 @@
 # Edf File parser
 
+[![Build Status](https://travis-ci.org/psbrandt/edf-parser.svg?branch=master)](https://travis-ci.org/psbrandt/edf-parser)
+
 Package to parse/process edf file as detailed on the [specification](http://www.edfplus.info/specs/edf.html) 
 
 **Important:** This is not and edf+ parser
